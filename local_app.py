@@ -205,13 +205,13 @@ st.sidebar.markdown("---")
 if total_items_in_cart > 0:
     st.sidebar.success(f"**Kurv Total:** {total_items_in_cart} varer ({total_cart_cost:.2f} kr.)")
 
-st.sidebar.button("✅ KØB (Lock in Sale)", type="primary", use_container_width=True, on_click=checkout_cart)
+st.sidebar.button("KØB (Lock in Sale)", type="primary", use_container_width=True, on_click=checkout_cart)
 
 st.sidebar.markdown("---")
-st.sidebar.error("🚨 EMERGENCY CONTROLS")
+st.sidebar.error("EMERGENCY CONTROLS")
 
-st.sidebar.button("📉 TRIGGER MARKET CRASH", use_container_width=True, on_click=trigger_market_crash)
-st.sidebar.button("🔄 Reset market", use_container_width=True, on_click=trigger_market_reset)
+st.sidebar.button("TRIGGER MARKET CRASH", use_container_width=True, on_click=trigger_market_crash)
+st.sidebar.button("Reset market", use_container_width=True, on_click=trigger_market_reset)
 
 st.sidebar.markdown("---")
 st.sidebar.success("📊 DATA EXPORT")

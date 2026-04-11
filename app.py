@@ -211,7 +211,7 @@ if is_admin:
     if total_items_in_cart > 0:
         st.sidebar.success(f"Kurv Total: {total_items_in_cart} varer ({total_cart_cost:.2f} kr.)")
 
-    st.sidebar.button("KOEB (Lock in Sale)", type="primary", use_container_width=True, on_click=checkout_cart)
+    st.sidebar.button("KØB (Lock in Sale)", type="primary", use_container_width=True, on_click=checkout_cart)
 
     st.sidebar.markdown("---")
     st.sidebar.error("Emergency Controls")
