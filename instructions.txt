@@ -1,0 +1,4 @@
+# How to run the app:
+source activate games
+cd /Users/johanandersen/Desktop/Python/dynamic-bar
+streamlit run local_app.py
