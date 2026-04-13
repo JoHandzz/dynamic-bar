@@ -156,8 +156,8 @@ current_prices = get_current_prices()
 # ==========================================
 # USER INTERFACE: PUBLIC DASHBOARD
 # ==========================================
-st.title("The Beer Exchange")
-st.markdown("### Live Market Ticker")
+st.title("STAMBAR")
+st.markdown("### Follow the live market")
 
 cols_row1 = st.columns(4)
 cols_row2 = st.columns(4)
@@ -191,7 +191,7 @@ if not history_df.empty:
 # ==========================================
 if is_admin:
     st.sidebar.title("Kasseapparat")
-    st.sidebar.markdown("Tilfoej varer til kurven:")
+    st.sidebar.markdown("Tilføj varer til kurven:")
 
     total_items_in_cart = 0
     total_cart_cost = 0.0
@@ -214,10 +214,10 @@ if is_admin:
     st.sidebar.button("KØB (Lock in Sale)", type="primary", use_container_width=True, on_click=checkout_cart)
 
     st.sidebar.markdown("---")
-    st.sidebar.error("Emergency Controls")
+    st.sidebar.error("Event controls")
 
     st.sidebar.button("Trigger Market Crash", use_container_width=True, on_click=trigger_market_crash)
-    st.sidebar.button("Reset Market", use_container_width=True, on_click=trigger_market_reset)
+    st.sidebar.button("Reset Market (original prices)", use_container_width=True, on_click=trigger_market_reset)
 
     st.sidebar.markdown("---")
     st.sidebar.success("Data Export")
