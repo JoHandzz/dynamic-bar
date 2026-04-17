@@ -17,8 +17,7 @@ INITIAL_PRICES = {
     "Filur": 20.00,
     "Moscow Mule": 20.00,
     "Sambuca": 10.00,
-    "Sodavand (Cola/Faxe)": 5.00,
-    "Vodka Redbull": 25.00
+    "Sodavand (Cola/Faxe)": 5.00
 }
 
 FLOOR_PRICES = {
@@ -29,9 +28,7 @@ FLOOR_PRICES = {
     "Filur": 14.00,
     "Moscow Mule": 14.00,
     "Sambuca": 6.00,
-    "Sodavand (Cola/Faxe)": 4.00,
-    "Vodka Redbull": 16
-
+    "Sodavand (Cola/Faxe)": 4.00
 }
 
 DRINKS = list(INITIAL_PRICES.keys())
