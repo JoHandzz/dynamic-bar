@@ -10,21 +10,35 @@ from sqlalchemy import text
 st.set_page_config(page_title="Beer Exchange", layout="wide", initial_sidebar_state="expanded")
 
 INITIAL_PRICES = {
+    "Kop": 2.00,
     "Øl": 10.00,
-    "Shot": 8.00,
-    "5 shots": 20.00,
-    "Rum & Coke": 20.00,
-    "Gin & Tonic": 20.00,
-    "Tequila Shot": 20.00,
-    "Whiskey Sour": 20.00
+    "Små Fugle Shot": 6.00,
+    "Vodka & Faxe": 20.00,
+    "Filur": 20.00,
+    "Moscow Mule": 20.00,
+    "Sambuca": 10.00,
+    "Sodavand (Cola/Faxe)": 5.00
+}
+
+FLOOR_PRICES = {
+    "Kop": 2.00,
+    "Øl": 5.00,
+    "Små Fugle Shot": 3.00,
+    "Vodka & Faxe": 14.00,
+    "Filur": 14.00,
+    "Moscow Mule": 14.00,
+    "Sambuca": 6.00,
+    "Sodavand (Cola/Faxe)": 4.00
 }
 
 DRINKS = list(INITIAL_PRICES.keys())
-FLOOR_PRICE = 2.00
+# Create a list of drinks that actually fluctuate (everything except Kop)
+MARKET_DRINKS = [d for d in DRINKS if d != "Kop"] 
+
 CEIL_PRICE = 30.00
-BUMP_BUY = 0.2      
-DECAY_PASSIVE = BUMP_BUY / len(DRINKS)  
-CRASH_DISCOUNT = 0.7
+BUMP_BUY = 0.3      
+# Calculate decay based only on the drinks that participate in the market
+DECAY_PASSIVE = BUMP_BUY / len(MARKET_DRINKS)  
 
 # ==========================================
 # STATE INITIALIZATION (The Shopping Cart)
@@ -40,7 +54,6 @@ conn = st.connection("supabase", type="sql")
 
 def init_db():
     with conn.session as s:
-        # Note: PostgreSQL uses SERIAL instead of AUTOINCREMENT, and TIMESTAMP
         s.execute(text("""
             CREATE TABLE IF NOT EXISTS price_history (
                 id SERIAL PRIMARY KEY,
@@ -102,13 +115,22 @@ def process_cart_sale(prices_dict):
             qty = st.session_state[f"cart_{drink}"]
             
             for _ in range(qty):
+                # Log the sale regardless of what it is
                 s.execute(text(f"INSERT INTO sales_log (drink_name, sale_price) VALUES ('{drink}', {temp_prices[drink]})"))
                 
+                # If they bought a Kop, do not trigger market fluctuations for the rest of the bar
+                if drink == "Kop":
+                    continue
+                
+                # If it's a normal drink, fluctuate the market
                 for d in DRINKS:
+                    if d == "Kop":
+                        continue  # Kop is immune to price changes
+                    
                     if d == drink:
                         temp_prices[d] = min(temp_prices[d] + BUMP_BUY, CEIL_PRICE)
                     else:
-                        temp_prices[d] = max(temp_prices[d] - DECAY_PASSIVE, FLOOR_PRICE)
+                        temp_prices[d] = max(temp_prices[d] - DECAY_PASSIVE, FLOOR_PRICES[d])
         
         for d in DRINKS:
             s.execute(text(f"INSERT INTO price_history (drink_name, price) VALUES ('{d}', {temp_prices[d]})"))
@@ -130,7 +152,7 @@ def checkout_cart():
 def trigger_market_crash():
     with conn.session as s:
         for drink in DRINKS:
-            crash_price = max(INITIAL_PRICES[drink] * (1 - CRASH_DISCOUNT), FLOOR_PRICE)
+            crash_price = FLOOR_PRICES[drink]
             s.execute(text(f"INSERT INTO price_history (drink_name, price) VALUES ('{drink}', {crash_price})"))
         s.commit()
 
@@ -147,7 +169,6 @@ def get_sales_log():
 # ==========================================
 # APP ROUTING (Single App Logic)
 # ==========================================
-# Checks if the URL is ?admin=bartender2026 (or whatever is in secrets.toml)
 query_params = st.query_params
 is_admin = query_params.get("admin") == st.secrets.get("ADMIN_PASS", "")
 
@@ -234,7 +255,6 @@ if is_admin:
 # ==========================================
 # REFRESH LOGIC (For Public View Only)
 # ==========================================
-# If it's a student viewing the public page, auto-refresh every 3 seconds
 if not is_admin:
     time.sleep(3)
     st.rerun()
